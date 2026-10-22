@@ -9,4 +9,4 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 .venv/bin/python run.py channel
 ```
 
-Needs `ffmpeg` and libcairo. Credentials come only from the environment: `YT_TOKEN_JSON` (the whole contents of an OAuth token.json), or `YT_CLIENT_ID`, `YT_CLIENT_SECRET` and `YT_REFRESH_TOKEN`. To get a fresh token, run `python auth.py client_secret.json` on your own computer.
+Needs `ffmpeg` and libcairo. Credentials come only from the environment: `YT_TOKEN_JSON` (the whole contents of an OAuth token.json), or `YT_CLIENT_ID`, `YT_CLIENT_SECRET` and `YT_REFRESH_TOKEN`. To get a fresh token with no local computer: `python auth.py url`, approve in any browser, then `python auth.py code "<the localhost URL>"`.
