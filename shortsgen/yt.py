@@ -86,3 +86,12 @@ def stats(video_ids):
                 "comments": int(s.get("commentCount", 0)),
             }
     return out
+
+
+def retention(video_ids, start, end):
+    """Per-video views, average seconds watched and average % watched (Analytics lags 1-3 days)."""
+    yta = build("youtubeAnalytics", "v2", credentials=creds(), cache_discovery=False)
+    r = yta.reports().query(ids="channel==MINE", startDate=start, endDate=end, dimensions="video",
+                            metrics="views,averageViewDuration,averageViewPercentage",
+                            filters="video==" + ",".join(video_ids)).execute()
+    return {row[0]: {"views": row[1], "avg_s": row[2], "avg_pct": row[3]} for row in r.get("rows", [])}
