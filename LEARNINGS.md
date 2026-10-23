@@ -12,10 +12,10 @@ Read this before every run. Add to it after every run.
 6. YouTube's UI covers the bottom ~400px. Countdowns and calls to action belong above y≈1500.
 7. `cairo` crashes on a zero scale. Animations that start at size 0 must skip drawing (`emoji()` does).
 8. Several `run.py make` running in parallel used to race on `manifest.jsonl`. It now takes a file lock; keep it.
+9. Always check that a puzzle's printed answer is correct (emoji_math computes it with `eval` of the same expression it draws). Recheck after any change to the question order.
 10. **YouTube caps uploads per channel**, separately from the API quota. On 10-23 the 5th upload failed with `uploadLimitExceeded` after 10 uploads in about 12 hours. Keep batches 24h apart (the daily run does) and never more than 6 in a rolling 24h. Phone-verifying the channel (youtube.com/verify) raises the cap.
 11. Scheduled runs read the login from the environment's `YT_TOKEN_JSON`, not from any session's files. On 10-22/23 the env still had the dead August token, so both scheduled runs stopped at `invalid_grant`.
 12. Everything visible must stay above y≈1500, including countdown numbers and end text. odd_emoji and emoji_math broke this on day 1 and were moved up on day 2.
-9. Always check that a puzzle's printed answer is correct (emoji_math computes it with `eval` of the same expression it draws). Recheck after any change to the question order.
 
 ## Baseline (before this pipeline)
 
