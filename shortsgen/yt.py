@@ -1,6 +1,7 @@
 """YouTube Data API access. Credentials come only from environment variables:
 
-  YT_TOKEN_JSON   the full contents of an OAuth token.json, or
+  YT_TOKEN_JSON   the full contents of an OAuth token.json (its refresh_token may
+                  instead be given separately as YT_REFRESH_TOKEN), or
   YT_CLIENT_ID + YT_CLIENT_SECRET + YT_REFRESH_TOKEN
 """
 import json
@@ -14,7 +15,11 @@ from googleapiclient.http import MediaFileUpload
 
 def creds():
     if os.environ.get("YT_TOKEN_JSON"):
-        c = Credentials.from_authorized_user_info(json.loads(os.environ["YT_TOKEN_JSON"]))
+        info = json.loads(os.environ["YT_TOKEN_JSON"])
+        # the refresh token can also be set on its own (easier to paste on a phone)
+        if not info.get("refresh_token") and os.environ.get("YT_REFRESH_TOKEN"):
+            info["refresh_token"] = os.environ["YT_REFRESH_TOKEN"].strip()
+        c = Credentials.from_authorized_user_info(info)
     else:
         missing = [k for k in ("YT_CLIENT_ID", "YT_CLIENT_SECRET", "YT_REFRESH_TOKEN") if not os.environ.get(k)]
         if missing:
