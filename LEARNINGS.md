@@ -12,6 +12,9 @@ Read this before every run. Add to it after every run.
 6. YouTube's UI covers the bottom ~400px. Countdowns and calls to action belong above y≈1500.
 7. `cairo` crashes on a zero scale. Animations that start at size 0 must skip drawing (`emoji()` does).
 8. Several `run.py make` running in parallel used to race on `manifest.jsonl`. It now takes a file lock; keep it.
+10. **YouTube caps uploads per channel**, separately from the API quota. On 10-23 the 5th upload failed with `uploadLimitExceeded` after 10 uploads in about 12 hours. Keep batches 24h apart (the daily run does) and never more than 6 in a rolling 24h. Phone-verifying the channel (youtube.com/verify) raises the cap.
+11. Scheduled runs read the login from the environment's `YT_TOKEN_JSON`, not from any session's files. On 10-22/23 the env still had the dead August token, so both scheduled runs stopped at `invalid_grant`.
+12. Everything visible must stay above y≈1500, including countdown numbers and end text. odd_emoji and emoji_math broke this on day 1 and were moved up on day 2.
 9. Always check that a puzzle's printed answer is correct (emoji_math computes it with `eval` of the same expression it draws). Recheck after any change to the question order.
 
 ## Baseline (before this pipeline)
@@ -30,10 +33,16 @@ Day 1 tests six formats at once, one each, at different times, to find a directi
 | D1-4 | afterimage | 10-23 02:30 | Stare at the dot for 15 seconds… 🤯 | | | Indian flag |
 | D1-5 | stop_timer | 10-23 04:30 | Pause at exactly 7.16 ⏱️ (I bet you can't) | | | 9s, loops |
 | D1-6 | color_word | 10-23 06:30 | Only 1% can finish this brain test 😵 | | | 16 words |
+| D2-3 | stop_timer | 10-23 09:30 | Stop the timer at 10.30 😤 | | | faster: speed 1.5 |
+| D2-6 | color_word | 10-23 12:00 | Your brain will glitch at the end 🧠 | | | shorter: 12 words, 15s |
+| D2-2 | emoji_math | 10-23 14:00 | Sirf 1% log solve kar paate hain 🧠 | | | NEW: Hinglish, India prime time |
+| D2-4 | odd_emoji | 10-23 16:00 | Alag emoji dhundo 👀 Level 3 impossible hai | | | NEW: Hinglish, India prime time |
+| D2-1 | marble_race | not uploaded | | | | hit upload cap; re-make with the same seed (31) to post |
+| D2-5 | afterimage | not uploaded | | | | hit upload cap; landscape scene, seed 35 |
 
 ## What the data says so far
 
-Nothing yet. First judgement on 2026-10-23 evening, once D1-1 and D1-2 have been public for 24h.
+- 10-23 07:40 UTC (videos 1–11h old): D1-1 marble_race 3 views, all other day-1 Shorts 0. Too early to judge. Note: brand-new Shorts on this channel are getting almost no first-hour impressions, so distribution is the bottleneck, not just the format.
 
 ## Ideas queue (try when a slot frees up)
 

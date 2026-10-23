@@ -12,17 +12,25 @@ PAIRS = {
 }
 LEVELS = [("LEVEL 1", "easy", 5, 7), ("LEVEL 2", "medium", 6, 9), ("LEVEL 3", "hard", 7, 10)]
 
-TITLES = [
-    "Find the odd one out 👀 Level 3 is impossible",
-    "Only 1% can find all 3 👀",
-    "Can you find the different emoji? 🔍",
-    "Find it in 5 seconds 👀 (99% fail level 3)",
-]
+TITLES = {
+    "en": ["Find the odd one out 👀 Level 3 is impossible", "Only 1% can find all 3 👀",
+           "Can you find the different emoji? 🔍", "Find it in 5 seconds 👀 (99% fail level 3)"],
+    "hi": ["Alag emoji dhundo 👀 Level 3 impossible hai", "Sirf 1% log teeno dhundh paate hain 👀",
+           "5 second mein dhundo 👀 (Level 3 sabse mushkil)"],
+}
+STR = {
+    "en": {"head": "Find the odd one out", "found": "Found it?", "end": "How many did\nyou find?",
+           "end2": "1, 2 or all 3?", "easy": "EASY", "medium": "MEDIUM", "hard": "HARD"},
+    "hi": {"head": "Alag wala dhundo", "found": "Mila kya?", "end": "Kitne mile\naapko?",
+           "end2": "1, 2 ya teeno?", "easy": "EASY", "medium": "MEDIUM", "hard": "MUSHKIL"},
+}
 
 
 def make(out, seed=1, **opts):
     rng = random.Random(seed)
     think = float(opts.get("think", 5))
+    lang = opts.get("lang", "en")
+    S = STR[lang]
     fps = 30
     hue = rng.random()
     rounds = []
@@ -55,18 +63,18 @@ def make(out, seed=1, **opts):
         bg(ctx, hsv(hue, 0.5, 0.25), hsv(hue + 0.1, 0.6, 0.1))
         r = next((r for r in rounds if r["start"] <= t < r["end"]), None)
         if r is None:
-            text(ctx, "How many did\nyou find?", W / 2, 760, 96, outline=10)
-            text(ctx, "1, 2 or all 3?", W / 2, 1060, 70, col=(1, 0.85, 0.3), outline=8)
+            text(ctx, S["end"], W / 2, 760, 96, outline=10)
+            text(ctx, S["end2"], W / 2, 1060, 70, col=(1, 0.85, 0.3), outline=8)
             v.emit()
             continue
         lt = t - r["start"]
-        text(ctx, "Find the odd one out", W / 2, 200, 72, outline=10)
-        text(ctx, f"{r['name']} · {r['diff'].upper()}", W / 2, 300, 56,
+        text(ctx, S["head"], W / 2, 200, 72, outline=10)
+        text(ctx, f"{r['name']} · {S[r['diff']]}", W / 2, 300, 56,
              col={"easy": (0.5, 1, 0.5), "medium": (1, 0.8, 0.3), "hard": (1, 0.4, 0.4)}[r["diff"]], outline=7)
         cols, rows = r["cols"], r["rows"]
-        cell = min((W - 80) / cols, 1050 / rows)
+        cell = min((W - 80) / cols, 940 / rows)
         gx = (W - cell * cols) / 2
-        gy = 390
+        gy = 370
         rrect(ctx, gx - 20, gy - 20, cell * cols + 40, cell * rows + 40, 36)
         ctx.set_source_rgba(1, 1, 1, 0.09)
         ctx.fill()
@@ -79,13 +87,13 @@ def make(out, seed=1, **opts):
                 emoji(ctx, ch, x, y, cell * 0.78 * s)
         if t < r["reveal"]:
             left = r["reveal"] - t
-            rrect(ctx, 140, 1500, W - 280, 36, 18)
+            rrect(ctx, 140, 1360, W - 280, 36, 18)
             ctx.set_source_rgba(1, 1, 1, 0.15)
             ctx.fill()
-            rrect(ctx, 140, 1500, max(36, (W - 280) * left / think), 36, 18)
+            rrect(ctx, 140, 1360, max(36, (W - 280) * left / think), 36, 18)
             ctx.set_source_rgb(*((1, 0.3, 0.3) if left < 2 else (1, 0.85, 0.3)))
             ctx.fill()
-            text(ctx, f"{int(left) + 1}", W / 2, 1640, 110, outline=10)
+            text(ctx, f"{int(left) + 1}", W / 2, 1490, 110, outline=10)
         else:
             k = ease((t - r["reveal"]) / 0.35)
             ox, oy = r["odd"]
@@ -95,14 +103,15 @@ def make(out, seed=1, **opts):
             ctx.set_source_rgba(1, 0.2, 0.2, k)
             ctx.set_line_width(10)
             ctx.stroke()
-            text(ctx, "Found it?", W / 2, 1610, 90, col=(0.5, 1, 0.5), outline=10)
+            text(ctx, S["found"], W / 2, 1460, 90, col=(0.5, 1, 0.5), outline=10)
         v.emit()
     v.close()
     return {
         "length_s": round(dur, 1),
         "params": {"rounds": [{k: r[k] for k in ("diff", "a", "b", "cols", "rows", "odd")} for r in rounds],
-                   "think": think},
-        "title": rng.choice(TITLES),
+                   "think": think, "lang": lang},
+        "title": rng.choice(TITLES[lang]),
+        "lang": lang,
         "tags": ["find the odd one out", "find the difference", "emoji quiz", "brain test", "puzzle",
                  "spot the difference", "eye test"],
         "hashtags": "#shorts #findtheoddoneout #emojichallenge #puzzle #eyetest",
